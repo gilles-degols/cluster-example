@@ -1,10 +1,11 @@
 import com.google.inject.AbstractModule
-import net.degols.example.cluster.Worker
+import net.degols.example.cluster.LeaderExample
 import play.api.libs.concurrent.AkkaGuiceSupport
 
 class Module extends AbstractModule with AkkaGuiceSupport {
 
-  override def configure() = {
-    bindActor[Worker]("worker")
+  override def configure(): Unit = {
+    bind(classOf[LifeCycle]).asEagerSingleton()
+    bindActor[LeaderExample]("cluster-leader-example")
   }
 }

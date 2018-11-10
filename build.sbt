@@ -7,17 +7,17 @@ version := "0.0.1"
 
 scriptClasspath in bashScriptDefines ~= (cp => "/../../../../../../../../../../etc/net.degols/local:/../../../../../../../../../../usr/lib/net.degols/election/conf/application.conf" +: cp)
 
+scalacOptions ++= Seq("-deprecation", "-feature", "-language:postfixOps")
+
 lazy val `filesgate` = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.12.3"
 lazy val playVersion = "2.6.1"
 lazy val akkaVersion = "2.5.2"
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
       
 resolvers += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
-      
-scalaVersion := "2.12.2"
 
 libraryDependencies ++= Seq( jdbc , ehcache , ws , specs2 % Test , guice )
 
@@ -44,3 +44,4 @@ libraryDependencies ++= clusterDependency
 
 // Akka Remoting
 libraryDependencies += "com.typesafe.akka" %% "akka-remote" % akkaVersion
+

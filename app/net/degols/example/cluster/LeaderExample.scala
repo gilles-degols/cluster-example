@@ -17,6 +17,7 @@ import net.degols.filesgate.libs.cluster.messages.{BasicLoadBalancerType, JVMIns
 import play.api.libs.concurrent.InjectedActorSupport
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
 
 @Singleton
 class LeaderExample @Inject()(electionService: ElectionService, configurationService: ConfigurationService, clusterConfiguration: ClusterConfiguration, cluster: Cluster)
@@ -52,7 +53,7 @@ class LeaderExample @Inject()(electionService: ElectionService, configurationSer
     */
   override def allWorkerTypeInfo: List[WorkerTypeInfo] = {
     List(
-      WorkerTypeInfo(self, "Activity", BasicLoadBalancerType(instances = 1, instanceType = JVMInstance))
+      WorkerTypeInfo(self, "Activity", BasicLoadBalancerType(instances = 2, JVMInstance))
     )
   }
 }

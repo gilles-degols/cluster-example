@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory
 
 class Activity extends Actor{
   private val logger = LoggerFactory.getLogger(getClass)
-  println(s"-----> Current Activity: ${akka.serialization.Serialization.serializedActorPath(self)}")
 
   override def receive: Receive = {
     case x =>

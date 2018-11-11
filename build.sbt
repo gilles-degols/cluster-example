@@ -21,8 +21,6 @@ resolvers += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
 
 libraryDependencies ++= Seq( jdbc , ehcache , ws , specs2 % Test , guice )
 
-unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
-
 // Cluster library
 val clusterLibraryVersion = "0.0.1"
 val clusterPath = "../cluster"

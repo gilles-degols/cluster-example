@@ -6,8 +6,6 @@ import play.api.libs.concurrent.AkkaGuiceSupport
 class Module extends AbstractModule with AkkaGuiceSupport {
 
   override def configure(): Unit = {
-    bindActor[Activity]("activity")
-
     bind(classOf[LifeCycle]).asEagerSingleton()
     bindActor[LeaderExample]("cluster-leader-example")
   }

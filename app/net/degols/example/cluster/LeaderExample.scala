@@ -3,17 +3,17 @@ package net.degols.example.cluster
 import java.io.File
 
 import akka.actor.{Actor, ActorRef, Kill, Props}
-import net.degols.filesgate.libs.election.{ConfigurationService, ElectionService, ElectionWrapper}
+import net.degols.libs.election.{ConfigurationService, ElectionService, ElectionWrapper}
 import org.slf4j.LoggerFactory
 import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.duration._
 import com.typesafe.config.{Config, ConfigFactory}
 import net.degols.example.cluster.example.Activity
-import net.degols.filesgate.libs.cluster.{ClusterConfiguration, Tools}
-import net.degols.filesgate.libs.cluster.core.Cluster
-import net.degols.filesgate.libs.cluster.manager.{Manager, WorkerLeader}
-import net.degols.filesgate.libs.cluster.messages.{BasicLoadBalancerType, JVMInstance, WorkerTypeInfo}
+import net.degols.libs.cluster.{ClusterConfiguration, Tools}
+import net.degols.libs.cluster.core.Cluster
+import net.degols.libs.cluster.manager.{Manager, WorkerLeader}
+import net.degols.libs.cluster.messages.{BasicLoadBalancerType, JVMInstance, WorkerTypeInfo}
 import play.api.libs.concurrent.InjectedActorSupport
 
 import scala.concurrent.ExecutionContext.Implicits.global

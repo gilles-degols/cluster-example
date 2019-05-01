@@ -1,4 +1,4 @@
-package net.degols.example.cluster.loadbalancing
+package net.degols.example.cluster.activity.loadbalancing
 
 import net.degols.libs.cluster.balancing.LoadBalancer
 import net.degols.libs.cluster.core.{Node, Worker, WorkerManager, WorkerType}
@@ -26,28 +26,28 @@ class BasicFilesgateLoadBalancer extends LoadBalancer {
 
   override def isLoadBalancerType(loadBalancerType: LoadBalancerType): Boolean = loadBalancerType.isInstanceOf[BasicFilesgateLoadBalancerType]
 
-  override def hardWorkDistribution(workerType: WorkerType): Unit = {
+  override def hardWorkDistribution(workerType: WorkerType, order: WorkerTypeOrder): Unit = {
     logger.debug("BasicFilesgateLoadBalancer - There is no hard work distribution in the BasicFilesgateLoadBalancer.")
   }
 
-  override def softWorkDistribution(workerType: WorkerType): Unit = {
+  override def softWorkDistribution(workerType: WorkerType, order: WorkerTypeOrder): Unit = {
     logger.debug(s"BasicFilesgateLoadBalancer - Soft work distribution for ${workerType.id}")
     val nodes = clusterManagement.cluster.nodesForWorkerType(workerType)
-    val balancerType = workerType.workerTypeInfo.loadBalancerType.asInstanceOf[BasicFilesgateLoadBalancerType]
+    val balancerType = order.loadBalancerType.asInstanceOf[BasicFilesgateLoadBalancerType]
 
     if(nodes.isEmpty) {
       logger.error(s"The WorkerType $workerType has no nodes available, no work distribution possible.")
     } else {
       // Depending on the type of WorkType, we want to create a specific number of workers by JVM or per cluster
       if(balancerType.instanceType == JVMInstance) {
-        softWorkDistributionPerJVM(workerType, nodes, balancerType)
+        softWorkDistributionPerJVM(workerType, nodes, balancerType, order)
       } else {
-        softWorkDistributionPerCluster(workerType, nodes, balancerType)
+        softWorkDistributionPerCluster(workerType, nodes, balancerType, order)
       }
     }
   }
 
-  private def softWorkDistributionPerJVM(workerType: WorkerType, nodes: List[Node], balancerType: BasicFilesgateLoadBalancerType): Unit = {
+  private def softWorkDistributionPerJVM(workerType: WorkerType, nodes: Seq[Node], balancerType: BasicFilesgateLoadBalancerType, order: WorkerTypeOrder): Unit = {
     val wantedInstances = balancerType.instances
 
     nodes.flatMap(_.workerManagers.filter(_.isUp))
@@ -59,16 +59,16 @@ class BasicFilesgateLoadBalancer extends LoadBalancer {
           logger.info(s"Starting ${wantedInstances - i} instances of $workerType on $this")
         }
         while(i < wantedInstances) {
-          workerManager.startWorker(context, workerType)
+          workerManager.startWorker(context, workerType, order.id)
           i += 1
         }
       })
   }
 
-  private def softWorkDistributionPerCluster(workerType: WorkerType, nodes: List[Node], balancerType: BasicFilesgateLoadBalancerType): Unit = {
+  private def softWorkDistributionPerCluster(workerType: WorkerType, nodes: Seq[Node], balancerType: BasicFilesgateLoadBalancerType, order: WorkerTypeOrder): Unit = {
     val wantedInstances = balancerType.instances
 
-    val managerAndRunningInstances: Map[WorkerManager, List[Worker]] = nodes.flatMap(node => node.workerManagers.filter(_.isUp))
+    val managerAndRunningInstances: Map[WorkerManager, Seq[Worker]] = nodes.flatMap(node => node.workerManagers.filter(_.isUp))
       .map(workerManager => workerManager -> workerManager.workerTypes.filter(_ == workerType).flatMap(_.workers.filter(_.isUp))).toMap
     val runningInstances = managerAndRunningInstances.values.flatten.size
     if(managerAndRunningInstances.keys.isEmpty) {
@@ -84,7 +84,7 @@ class BasicFilesgateLoadBalancer extends LoadBalancer {
         var i = runningInstances
         while(i < wantedInstances) {
           val workerManager = Random.shuffle(availableManagers).head
-          workerManager._1.startWorker(context, workerType)
+          workerManager._1.startWorker(context, workerType, order.id)
           i += 1
         }
       }

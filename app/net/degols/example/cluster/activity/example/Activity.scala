@@ -1,4 +1,4 @@
-package net.degols.example.cluster.example
+package net.degols.example.cluster.activity.example
 
 import akka.actor.Actor
 import org.slf4j.LoggerFactory

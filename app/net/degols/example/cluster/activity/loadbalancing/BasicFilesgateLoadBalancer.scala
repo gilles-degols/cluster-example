@@ -59,7 +59,7 @@ class BasicFilesgateLoadBalancer extends LoadBalancer {
           logger.info(s"Starting ${wantedInstances - i} instances of $workerType on $this")
         }
         while(i < wantedInstances) {
-          workerManager.startWorker(context, workerType, order.id)
+          workerManager.startWorker(context, workerType, order)
           i += 1
         }
       })
@@ -84,7 +84,7 @@ class BasicFilesgateLoadBalancer extends LoadBalancer {
         var i = runningInstances
         while(i < wantedInstances) {
           val workerManager = Random.shuffle(availableManagers).head
-          workerManager._1.startWorker(context, workerType, order.id)
+          workerManager._1.startWorker(context, workerType, order)
           i += 1
         }
       }

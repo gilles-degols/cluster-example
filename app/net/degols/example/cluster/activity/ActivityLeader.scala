@@ -9,7 +9,7 @@ import net.degols.libs.cluster.manager.{PackageLeaderApi, StartWorkerWrapper, Wo
 import net.degols.libs.cluster.messages.{JVMInstance, WorkerTypeInfo}
 
 class ActivityLeader extends PackageLeaderApi {
-  override def packageName: String = "Activity"
+  override val packageName: String = "Activity"
 
   override def startWorker(work: StartWorkerWrapper): ActorRef = {
     work.shortName match {
@@ -26,7 +26,7 @@ class ActivityLeader extends PackageLeaderApi {
     }
   }
 
-  override def workerInfos: Seq[WorkerInfo] = {
+  override val workerInfos: Seq[WorkerInfo] = {
     List(
       WorkerInfo("Activity", Option(BasicLoadBalancerType(instances = 2, JVMInstance))),
       WorkerInfo("ActivityCustom", Option(BasicFilesgateLoadBalancerType(instances = 5, JVMInstance)))

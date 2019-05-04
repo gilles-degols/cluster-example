@@ -8,11 +8,11 @@ import net.degols.libs.cluster.manager.{ComponentLeaderApi, PackageLeaderApi}
 
 @Singleton
 class ComponentLeader @Inject()(activityLeader: ActivityLeader) extends ComponentLeaderApi {
-  override def componentName: String = "Component"
+  override val componentName: String = "Component"
 
-  override def packageLeaders: Seq[PackageLeaderApi] = List(activityLeader)
+  override val packageLeaders: Seq[PackageLeaderApi] = List(activityLeader)
 
-  override def loadBalancers: Seq[LoadBalancer] = {
+  override val loadBalancers: Seq[LoadBalancer] = {
     val balancer = new BasicFilesgateLoadBalancer()
     List(balancer)
   }

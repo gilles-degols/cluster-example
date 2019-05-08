@@ -12,5 +12,6 @@ class Activity extends Actor{
   override def receive: Receive = {
     case x =>
       logger.debug(s"Received a message in the Activity actor: $x")
+
   }
 }

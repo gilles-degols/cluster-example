@@ -1,10 +1,12 @@
 package net.degols.example.cluster.activity.loadbalancing
 
 import net.degols.libs.cluster.balancing.LoadBalancer
+import net.degols.libs.cluster.configuration.{ClusterConfiguration, ClusterConfigurationApi}
 import net.degols.libs.cluster.core.{Node, Worker, WorkerManager, WorkerType}
 import net.degols.libs.cluster.messages._
 import org.slf4j.LoggerFactory
 
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 
 /**
@@ -26,23 +28,27 @@ class BasicFilesgateLoadBalancer extends LoadBalancer {
 
   override def isLoadBalancerType(loadBalancerType: LoadBalancerType): Boolean = loadBalancerType.isInstanceOf[BasicFilesgateLoadBalancerType]
 
-  override def hardWorkDistribution(workerType: WorkerType, order: WorkerTypeOrder): Unit = {
-    logger.debug("BasicFilesgateLoadBalancer - There is no hard work distribution in the BasicFilesgateLoadBalancer.")
+  override def hardWorkDistribution(workerType: WorkerType, order: WorkerTypeOrder)(implicit ec: ExecutionContext): Future[Unit] = {
+    Future{
+      logger.debug("BasicFilesgateLoadBalancer - There is no hard work distribution in the BasicFilesgateLoadBalancer.")
+    }
   }
 
-  override def softWorkDistribution(workerType: WorkerType, order: WorkerTypeOrder): Unit = {
-    logger.debug(s"BasicFilesgateLoadBalancer - Soft work distribution for ${workerType.id}")
-    val nodes = clusterManagement.cluster.nodesForWorkerType(workerType)
-    val balancerType = order.loadBalancerType.asInstanceOf[BasicFilesgateLoadBalancerType]
+  override def softWorkDistribution(workerType: WorkerType, order: WorkerTypeOrder)(implicit ec: ExecutionContext): Future[Unit] = {
+    Future {
+      logger.debug(s"BasicFilesgateLoadBalancer - Soft work distribution for ${workerType.id}")
+      val nodes = clusterManagement.cluster.nodesForWorkerType(workerType)
+      val balancerType = order.loadBalancerType.asInstanceOf[BasicFilesgateLoadBalancerType]
 
-    if(nodes.isEmpty) {
-      logger.error(s"The WorkerType $workerType has no nodes available, no work distribution possible.")
-    } else {
-      // Depending on the type of WorkType, we want to create a specific number of workers by JVM or per cluster
-      if(balancerType.instanceType == JVMInstance) {
-        softWorkDistributionPerJVM(workerType, nodes, balancerType, order)
+      if(nodes.isEmpty) {
+        logger.error(s"The WorkerType $workerType has no nodes available, no work distribution possible.")
       } else {
-        softWorkDistributionPerCluster(workerType, nodes, balancerType, order)
+        // Depending on the type of WorkType, we want to create a specific number of workers by JVM or per cluster
+        if(balancerType.instanceType == JVMInstance) {
+          softWorkDistributionPerJVM(workerType, nodes, balancerType, order)
+        } else {
+          softWorkDistributionPerCluster(workerType, nodes, balancerType, order)
+        }
       }
     }
   }

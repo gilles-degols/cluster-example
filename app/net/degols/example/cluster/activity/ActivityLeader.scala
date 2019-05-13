@@ -8,11 +8,13 @@ import net.degols.libs.cluster.balancing.BasicLoadBalancerType
 import net.degols.libs.cluster.configuration.ClusterConfigurationApi
 import net.degols.libs.cluster.manager.{PackageLeaderApi, StartWorkerWrapper, WorkerInfo}
 import net.degols.libs.cluster.messages.{JVMInstance, WorkerTypeInfo}
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.Future
 
 @Singleton
 class ActivityLeader @Inject()(clusterConfiguration: ClusterConfigurationApi) extends PackageLeaderApi {
+  private val logger: Logger = LoggerFactory.getLogger(getClass)
   implicit val ec = clusterConfiguration.executionContext
   override val packageName: String = "Activity"
 

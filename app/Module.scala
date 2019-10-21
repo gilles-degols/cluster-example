@@ -10,6 +10,5 @@ class Module extends AbstractModule with AkkaGuiceSupport {
 
     bind(classOf[ComponentLeaderApi]).to(classOf[ComponentLeader])
     bindActor[ClusterLeaderActor]("cluster-leader-actor")
-
   }
 }

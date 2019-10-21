@@ -22,12 +22,12 @@ class ActivityLeader @Inject()(clusterConfiguration: ClusterConfigurationApi) ex
     Future{
       setWorker(
         WorkerInfo("Activity", Option(BasicLoadBalancerType(instances = 2, JVMInstance))),
-        work => _context.actorOf(Props.create(classOf[Activity]), name = work.actorName)
+        work => _context.actorOf(Props(new Activity()), name = work.actorName)
       )
 
       setWorker(
         WorkerInfo("ActivityCustom", Option(BasicFilesgateLoadBalancerType(instances = 5, JVMInstance))),
-        work => _context.actorOf(Props.create(classOf[Activity]), name = work.actorName)
+        work => _context.actorOf(Props(new Activity()), name = work.actorName)
       )
     }
   }
